@@ -1,0 +1,85 @@
+{
+  "name": "@kazamitte/textlint-config",
+  "version": "0.2.0",
+  "type": "module",
+  "private": true,
+  "description": "Shared Textlint config presets for the monorepo project",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "format": "prettier --write src",
+    "clean": "rm -rf dist"
+  },
+  "bin": {
+    "textlint-config": "./bin/textlint-config.mjs"
+  },
+  "exports": {
+    "./base": {
+      "import": {
+        "types": "./dist/textlint.base.d.ts",
+        "default": "./dist/textlint.base.js"
+      },
+      "require": {
+        "types": "./dist/textlint.base.d.cts",
+        "default": "./dist/textlint.base.cjs"
+      }
+    },
+    "./html": {
+      "import": {
+        "types": "./dist/textlint.html.d.ts",
+        "default": "./dist/textlint.html.js"
+      },
+      "require": {
+        "types": "./dist/textlint.html.d.cts",
+        "default": "./dist/textlint.html.cjs"
+      }
+    },
+    "./runner": {
+      "import": {
+        "types": "./dist/textlint.runner.d.ts",
+        "default": "./dist/textlint.runner.js"
+      },
+      "require": {
+        "types": "./dist/textlint.runner.d.cts",
+        "default": "./dist/textlint.runner.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    ".textlintignore"
+  ],
+  "peerDependencies": {
+    "textlint": "^15.7.1"
+  },
+  "dependencies": {
+    "@textlint/kernel": "^15.7.1",
+    "@textlint/module-interop": "^15.7.1",
+    "@textlint/textlint-plugin-markdown": "^15.7.1",
+    "@textlint/textlint-plugin-text": "^15.7.1",
+    "textlint-filter-rule-comments": "^1.3.0",
+    "textlint-plugin-html": "^1.0.0",
+    "textlint-rule-preset-ai-writing": "^1.1.0",
+    "textlint-rule-preset-ja-spacing": "^3.0.2",
+    "textlint-rule-preset-ja-technical-writing": "^12.0.2",
+    "textlint-rule-preset-japanese": "^10.0.0",
+    "textlint-rule-preset-jtf-style": "^3.0.3"
+  },
+  "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
+    "@types/node": "^26.4.0",
+    "prettier": "^3.8.0",
+    "textlint": "^15.7.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.5.2",
+    "vitest": "^4.0.18"
+  }
+}
