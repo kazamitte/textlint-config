@@ -1,0 +1,124 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// src/textlint.base.ts
+var textlint_base_exports = {};
+__export(textlint_base_exports, {
+  createBaseConfig: () => createBaseConfig
+});
+module.exports = __toCommonJS(textlint_base_exports);
+var import_kernel = require("@textlint/kernel");
+var import_module_interop = require("@textlint/module-interop");
+var import_textlint_plugin_markdown = __toESM(require("@textlint/textlint-plugin-markdown"), 1);
+var import_textlint_plugin_text = __toESM(require("@textlint/textlint-plugin-text"), 1);
+var import_textlint_filter_rule_comments = __toESM(require("textlint-filter-rule-comments"), 1);
+var import_textlint_rule_preset_ai_writing = __toESM(require("textlint-rule-preset-ai-writing"), 1);
+var import_textlint_rule_preset_ja_spacing = __toESM(require("textlint-rule-preset-ja-spacing"), 1);
+var import_textlint_rule_preset_ja_technical_writing = __toESM(require("textlint-rule-preset-ja-technical-writing"), 1);
+var import_textlint_rule_preset_japanese = __toESM(require("textlint-rule-preset-japanese"), 1);
+var import_textlint_rule_preset_jtf_style = __toESM(require("textlint-rule-preset-jtf-style"), 1);
+var asPreset = (preset) => "rules" in preset ? preset : preset.default;
+var expandPreset = (presetName, preset) => {
+  const { rules, rulesConfig } = asPreset(preset);
+  return Object.keys(rules).map((ruleKey) => ({
+    ruleId: `${presetName}/${ruleKey}`,
+    rule: rules[ruleKey],
+    options: rulesConfig?.[ruleKey] ?? true
+  }));
+};
+var STYLE_PRESETS = {
+  japanese: ["preset-japanese", import_textlint_rule_preset_japanese.default],
+  "ja-technical-writing": [
+    "preset-ja-technical-writing",
+    import_textlint_rule_preset_ja_technical_writing.default
+  ],
+  "jtf-style": ["preset-jtf-style", import_textlint_rule_preset_jtf_style.default]
+};
+var flattenOverrides = (overrides) => Object.fromEntries(
+  Object.entries(overrides).flatMap(
+    ([key, value]) => !key.includes("/") && value !== null && typeof value === "object" ? Object.entries(value).map(([ruleKey, ruleValue]) => [
+      `${key}/${ruleKey}`,
+      ruleValue
+    ]) : [[key, value]]
+  )
+);
+var applyOverrides = (rules, rawOverrides) => {
+  const overrides = flattenOverrides(rawOverrides);
+  return rules.flatMap((rule) => {
+    const presetName = rule.ruleId.slice(0, rule.ruleId.indexOf("/"));
+    const key = rule.ruleId in overrides ? rule.ruleId : presetName in overrides ? presetName : void 0;
+    if (key === void 0) return [rule];
+    const override = overrides[key];
+    if (override === false) return [];
+    if (override === true) return [rule];
+    return [{ ...rule, options: override }];
+  });
+};
+function createBaseConfig(options = {}) {
+  const {
+    style = "ja-technical-writing",
+    aiWriting = true,
+    spacing = true,
+    rules: overrides = {}
+  } = options;
+  const rules = applyOverrides(
+    [
+      ...expandPreset(...STYLE_PRESETS[style]),
+      ...aiWriting ? expandPreset("preset-ai-writing", import_textlint_rule_preset_ai_writing.default) : [],
+      ...spacing ? expandPreset("preset-ja-spacing", import_textlint_rule_preset_ja_spacing.default) : []
+    ],
+    overrides
+  );
+  return new import_kernel.TextlintKernelDescriptor({
+    rules,
+    filterRules: [
+      {
+        ruleId: "comments",
+        rule: (0, import_module_interop.moduleInterop)(import_textlint_filter_rule_comments.default),
+        options: true
+      }
+    ],
+    plugins: [
+      {
+        pluginId: "@textlint/markdown",
+        plugin: (0, import_module_interop.moduleInterop)(
+          import_textlint_plugin_markdown.default
+        )
+      },
+      {
+        pluginId: "@textlint/text",
+        plugin: (0, import_module_interop.moduleInterop)(import_textlint_plugin_text.default)
+      }
+    ]
+  });
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  createBaseConfig
+});
