@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { runTextlint } from '../src/textlint.runner.js';
+import { runTextlint } from '../dist/textlint.runner.js';
 
 // Thin CLI in the eslint spirit: load a declarative `textlint.config.mjs` from
 // cwd (overridable with --config) and lint, or auto-fix on disk with --fix. The
